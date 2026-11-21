@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: poke-boot
+
+  datasource:
+    url: "jdbc:mysql://localhost:3306/poke_boot?sslMode=DISABLED&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    hikari:
+      initialization-fail-timeout: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+app:
+  cors:
+    allowed-origins: "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173"
+
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-key-change-me-1234567890}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+  admin:
+    email: ${APP_ADMIN_EMAIL:}
+    password: ${APP_ADMIN_PASSWORD:}
