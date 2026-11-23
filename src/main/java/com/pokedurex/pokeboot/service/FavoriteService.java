@@ -5,6 +5,7 @@ import com.pokedurex.pokeboot.dto.FavoriteRequest;
 import com.pokedurex.pokeboot.dto.FavoriteResponse;
 import com.pokedurex.pokeboot.dto.FavoriteUpdateRequest;
 import com.pokedurex.pokeboot.exception.DuplicateFavoriteException;
+import com.pokedurex.pokeboot.exception.FavoriteLimitException;
 import com.pokedurex.pokeboot.exception.FavoriteNotFoundException;
 import com.pokedurex.pokeboot.model.Favorite;
 import com.pokedurex.pokeboot.model.Role;
@@ -19,6 +20,8 @@ import java.util.List;
 
 @Service
 public class FavoriteService {
+
+    public static final int MAX_FAVORITES = 6;
 
     private final FavoriteRepository favoriteRepository;
     private final UserRepository userRepository;
@@ -45,6 +48,10 @@ public class FavoriteService {
     public FavoriteResponse add(User user, FavoriteRequest request) {
         if (favoriteRepository.existsByUserIdAndPokemonId(user.getId(), request.pokemonId())) {
             throw new DuplicateFavoriteException();
+        }
+
+        if (favoriteRepository.countByUserId(user.getId()) >= MAX_FAVORITES) {
+            throw new FavoriteLimitException();
         }
 
         User owner = userRepository.getReferenceById(user.getId());

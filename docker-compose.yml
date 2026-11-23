@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: poke-boot-mysql
+    container_name: poke
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root

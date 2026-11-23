@@ -17,6 +17,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -179,6 +182,42 @@ class FavoriteIntegrationTest {
                 .andExpect(status().isUnauthorized());
 
         favoriteRepository.deleteById(favoritoId);
+    }
+
+    @Test
+    void unUsuarioNoPuedeSuperarSeisFavoritos() throws Exception {
+        String token = registrarEIniciarSesion(
+                "Max", "max-test@pokedurex.local", "max12345"
+        );
+
+        List<Long> ids = new ArrayList<>();
+
+        for (int pokemonId = 1; pokemonId <= 6; pokemonId++) {
+            MvcResult creado = mockMvc.perform(post("/api/favorites")
+                            .header("Authorization", bearer(token))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"pokemonId\": " + pokemonId + "}"))
+                    .andExpect(status().isCreated())
+                    .andReturn();
+
+            ids.add(leerJson(creado).get("id").asLong());
+        }
+
+        mockMvc.perform(post("/api/favorites")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"pokemonId": 7}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message")
+                        .value("Solo puedes tener hasta 6 Pokémon favoritos"));
+
+        for (Long id : ids) {
+            mockMvc.perform(delete("/api/favorites/{id}", id)
+                            .header("Authorization", bearer(token)))
+                    .andExpect(status().isNoContent());
+        }
     }
 
     @Test

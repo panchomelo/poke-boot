@@ -75,6 +75,14 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, exception.getMessage(), request);
     }
 
+    @ExceptionHandler(FavoriteLimitException.class)
+    public ResponseEntity<ErrorResponse> handleFavoriteLimit(
+            FavoriteLimitException exception,
+            HttpServletRequest request
+    ) {
+        return build(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(
             AccessDeniedException exception,
