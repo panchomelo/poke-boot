@@ -34,19 +34,15 @@ public class Favorite {
     @Column(name = "pokemon_id", nullable = false)
     private Integer pokemonId;
 
-    @Column(length = 100)
-    private String alias;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     protected Favorite() {
     }
 
-    public Favorite(User user, Integer pokemonId, String alias) {
+    public Favorite(User user, Integer pokemonId) {
         this.user = user;
         this.pokemonId = pokemonId;
-        this.alias = alias;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -60,14 +56,6 @@ public class Favorite {
 
     public Integer getPokemonId() {
         return pokemonId;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
     }
 
     public LocalDateTime getCreatedAt() {

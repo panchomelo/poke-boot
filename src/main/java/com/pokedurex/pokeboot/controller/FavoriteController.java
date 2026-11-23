@@ -4,7 +4,6 @@ import com.pokedurex.pokeboot.dto.AdminFavoriteResponse;
 import com.pokedurex.pokeboot.dto.ErrorResponse;
 import com.pokedurex.pokeboot.dto.FavoriteRequest;
 import com.pokedurex.pokeboot.dto.FavoriteResponse;
-import com.pokedurex.pokeboot.dto.FavoriteUpdateRequest;
 import com.pokedurex.pokeboot.model.User;
 import com.pokedurex.pokeboot.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -114,29 +112,6 @@ public class FavoriteController {
             @Valid @RequestBody FavoriteRequest request
     ) {
         return favoriteService.add(user, request);
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Actualizar el alias de un favorito")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Favorito actualizado"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Datos inválidos",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Favorito inexistente o de otro usuario",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-            )
-    })
-    public FavoriteResponse update(
-            @AuthenticationPrincipal User user,
-            @PathVariable Long id,
-            @Valid @RequestBody FavoriteUpdateRequest request
-    ) {
-        return favoriteService.update(user, id, request);
     }
 
     @DeleteMapping("/{id}")

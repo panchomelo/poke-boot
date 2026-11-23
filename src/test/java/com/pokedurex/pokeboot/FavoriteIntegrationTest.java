@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -91,15 +90,6 @@ class FavoriteIntegrationTest {
                                 """))
                 .andExpect(status().isConflict());
 
-        mockMvc.perform(put("/api/favorites/{id}", favoritoId)
-                        .header("Authorization", bearer(token))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"alias": "Mi compañero"}
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alias").value("Mi compañero"));
-
         mockMvc.perform(get("/api/favorites/all")
                         .header("Authorization", bearer(token)))
                 .andExpect(status().isForbidden());
@@ -123,7 +113,7 @@ class FavoriteIntegrationTest {
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"pokemonId": 121, "alias": "Estrella"}
+                                {"pokemonId": 121}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -134,8 +124,7 @@ class FavoriteIntegrationTest {
         mockMvc.perform(get("/api/favorites/all")
                         .header("Authorization", bearer(adminToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].user.email", hasItem(email)))
-                .andExpect(jsonPath("$[*].alias", hasItem("Estrella")));
+                .andExpect(jsonPath("$[*].user.email", hasItem(email)));
 
         mockMvc.perform(delete("/api/favorites/{id}", favoritoId)
                         .header("Authorization", bearer(adminToken)))

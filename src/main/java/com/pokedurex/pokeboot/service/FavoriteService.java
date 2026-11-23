@@ -3,7 +3,6 @@ package com.pokedurex.pokeboot.service;
 import com.pokedurex.pokeboot.dto.AdminFavoriteResponse;
 import com.pokedurex.pokeboot.dto.FavoriteRequest;
 import com.pokedurex.pokeboot.dto.FavoriteResponse;
-import com.pokedurex.pokeboot.dto.FavoriteUpdateRequest;
 import com.pokedurex.pokeboot.exception.DuplicateFavoriteException;
 import com.pokedurex.pokeboot.exception.FavoriteLimitException;
 import com.pokedurex.pokeboot.exception.FavoriteNotFoundException;
@@ -55,21 +54,13 @@ public class FavoriteService {
         }
 
         User owner = userRepository.getReferenceById(user.getId());
-        Favorite favorite = new Favorite(owner, request.pokemonId(), normalizeAlias(request.alias()));
+        Favorite favorite = new Favorite(owner, request.pokemonId());
 
         try {
             favoriteRepository.saveAndFlush(favorite);
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateFavoriteException();
         }
-
-        return FavoriteResponse.from(favorite);
-    }
-
-    @Transactional
-    public FavoriteResponse update(User user, Long id, FavoriteUpdateRequest request) {
-        Favorite favorite = findAccessible(user, id);
-        favorite.setAlias(normalizeAlias(request.alias()));
 
         return FavoriteResponse.from(favorite);
     }
@@ -98,14 +89,5 @@ public class FavoriteService {
         }
 
         return favorite;
-    }
-
-    private String normalizeAlias(String alias) {
-        if (alias == null) {
-            return null;
-        }
-
-        String trimmed = alias.trim();
-        return trimmed.isEmpty() ? null : trimmed;
     }
 }

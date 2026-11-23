@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 public record AdminFavoriteResponse(
         Long id,
         Integer pokemonId,
-        String alias,
         LocalDateTime createdAt,
         FavoriteUserResponse user
 ) {
@@ -16,7 +15,6 @@ public record AdminFavoriteResponse(
         return new AdminFavoriteResponse(
                 favorite.getId(),
                 favorite.getPokemonId(),
-                favorite.getAlias(),
                 favorite.getCreatedAt(),
                 FavoriteUserResponse.from(favorite.getUser())
         );
